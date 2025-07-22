@@ -7,7 +7,7 @@ This repository contains an Ansible playbook designed to securely reset the root
 .
 ├── password_reset_using_vault.yml   # Main playbook to reset root password
 ├── vault.yml                        # Encrypted file storing the root password
-├── servers                          # Inventory file listing target hosts
+├── hosts                          # Inventory file listing target hosts
 └── README.md                        # Project documentation (this file)
 
 📋 Prerequisites
@@ -25,6 +25,9 @@ To store the root password securely, create and encrypt the vault.yml file:
 ansible-vault create vault.yml
 When prompted, add the following content:
 
+ansible-vault create vault.yml
+vault_root_password: "{{ 'xyz' | password_hash('sha512') }}"
+or
 vault_root_password: '<hashed_password>'
 Replace <hashed_password> with a hashed password. You can generate a hashed password using openssl or python.
 
@@ -42,17 +45,17 @@ Save and exit. This file will now be encrypted.
 Ensure your servers inventory file contains the correct IPs and credentials:
 
 [all]
-54.235.28.136 ansible_user=komal ansible_password=5912
-34.227.24.18 ansible_user=komal ansible_password=5912
-⚠️ Note: Avoid committing real passwords or IPs to a public repo. Use Ansible Vault or .gitignore for security.
+server1 ansible_user=komal ansible_password=xyz
+server2 ansible_user=komal ansible_password=xyz
+
 🚀 Step 3: Run the Playbook
 
 Execute the playbook with the following command:
 
 ansible-playbook -i servers password_reset_using_vault.yml --ask-vault-pass
 Or use a vault password file:
-
 ansible-playbook -i servers password_reset_using_vault.yml --vault-password-file .vault_pass.txt
+
 📌 Notes
 
 This playbook resets the root password on all hosts listed in the inventory.
